@@ -1,0 +1,13 @@
+openapi: 3.0.1
+info:
+  title: Invoke
+  description: API Definition of Invoke
+  version: 1.0.0
+servers:
+- url: http://localhost:8290/invoke
+paths:
+  /:
+    get:
+      responses:
+        default:
+          description: Default response

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/send" name="send" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="POST" uri-template="/">
+        <inSequence>
+            <log level="full">
+                <property name="Step" value="Incoming Request" />
+            </log>
+
+            <enrich>
+                <source type="body" />
+                <target type="property" property="requestPayload" />
+            </enrich>
+
+            <property name="auth_scheme" expression="$ctx:requestPayload/auth_scheme"
+                scope="default" />
+            <property name="format" expression="$ctx:requestPayload/format" scope="default" />
+            <property name="isTemplate" expression="$ctx:requestPayload/isTemplate" scope="default" />
+            <property name="method" expression="$ctx:requestPayload/method" scope="default" />
+            <property name="msg" expression="$ctx:requestPayload/msg" scope="default" />
+            <property name="msg_type" expression="$ctx:requestPayload/msg_type" scope="default" />
+            <property name="password" expression="$ctx:requestPayload/password" scope="default" />
+            <property name="send_to" expression="$ctx:requestPayload/send_to" scope="default" />
+            <property name="userid" expression="$ctx:requestPayload/userid" scope="default" />
+            <property name="v" expression="$ctx:requestPayload/v" scope="default" />
+            <property name="msg_id" expression="$ctx:requestPayload/msg_id" scope="default" />
+            <property name="check_duplicate_post_in_duration"
+                expression="$ctx:requestPayload/check_duplicate_post_in_duration" scope="default" />
+            <property name="check_duplicate_post"
+                expression="$ctx:requestPayload/check_duplicate_post" scope="default" />
+            <property name="extra" expression="$ctx:requestPayload/extra" scope="default" />
+            <property name="linkTrackingEnabled" expression="$ctx:requestPayload/linkTrakingEnabled"
+                scope="default" />
+            <property name="isHSM" expression="$ctx:requestPayload/isHSM" scope="default" />
+            <property name="templateName" expression="$ctx:requestPayload/templateName" scope="default" />
+            <property name="from" expression="$ctx:requestPayload/from" scope="default" />
+            <property name="custName" expression="$ctx:requestPayload/custName" scope="default" />
+            <property name="wifi_id" expression="$ctx:requestPayload/wifi_id" scope="default" />
+
+            <log level="full">
+                <property name="Step" value="Extracted Parameters" />
+                <property name="AuthScheme" expression="get-property('auth_scheme')" />
+                <property name="Format" expression="get-property('format')" />
+                <property name="Method" expression="get-property('method')" />
+                <property name="templateName" expression="get-property('templateName')" />
+                <property name="from" expression="get-property('from')" />
+                <property name="custName" expression="get-property('custName')" />
+                <property name="wifi_id" expression="get-property('wifi_id')" />
+            </log>
+
+            <payloadFactory media-type="json" template-type="default">
+                <format> {
+                            "messages": [
+                                {
+                                    "from": "$1",
+                                    "to": "$2",
+                                    "messageId": "$3",
+                                    "content": {
+                                        "templateName": "$4",
+                                        "templateData": {
+                                            "body": {
+                                                "placeholders": [
+                                                    "$5",
+                                                    "$6"
+                                                ]
+                                            },
+                                            "buttons": [
+                                                {
+                                                    "type": "QUICK_REPLY",
+                                                    "parameter": "Let's proceed"
+                                                }
+                                            ]
+                                        },
+                                        "language": "en"
+                                    }
+                                }
+                            ]
+                        }
+                </format>
+                <args>
+                    <arg expression="get-property('from')" />
+                    <arg expression="get-property('send_to')" />
+                    <arg expression="get-property('correlation_id')" />
+                    <arg expression="get-property('templateName')" />
+                    <arg expression="get-property('custName')" />
+                    <arg expression="get-property('wifi_id')" />
+                </args>
+            </payloadFactory>
+            <property name="auth_token"
+                value="App 9e8f28c4291996895cb5be1472866353-0e8a9ee2-aac4-43a4-bad0-6e1b0b7bc9cc"
+                scope="default" />
+
+            <log level="full">
+                <property name="Step----------------" value="After Payload -----------Factory" />
+                <property name="uri" expression="get-property('uri_template')" />
+            </log>
+            <header name="Authorization" action="set" scope="transport"
+                expression="get-property('auth_token')" />
+
+            <call blocking="false">
+                <endpoint key="whatsapp-endpoint" />
+            </call>
+
+            <log level="full">
+                <property name="Step" value="After Payload Factory" />
+                <property name="auth_scheme" expression="json-eval($.auth_scheme)" />
+            </log>
+
+            <!-- <property name="messageType" scope="axis2" type="STRING" value="application/json" /> -->
+
+            <respond />
+        </inSequence>
+
+        <outSequence />
+
+        <faultSequence>
+            <log level="full">
+                <property name="Step" value="Fault Sequence Triggered" />
+            </log>
+            <property name="HTTP_STATUS" value="500" scope="axis2" />
+            <respond />
+        </faultSequence>
+    </resource>
+    <resource methods="POST" uri-template="/callback-api">
+        <inSequence>
+            <call>
+                <endpoint key="calllbackEndPoint" />
+            </call>
+        </inSequence>
+        <faultSequence>
+        </faultSequence>
+    </resource>
+</api>

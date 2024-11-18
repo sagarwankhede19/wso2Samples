@@ -1,0 +1,19 @@
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="ProcessCallbackDataSequence">
+    <log level="full">
+        <property name="Info" value="Received callback data from Infobip" />
+    </log>
+    <enrich>
+        <source type="body" />
+        <target type="property" property="incomingPayload" />
+    </enrich>
+    <payloadFactory media-type="json" template-type="default">
+        <format> $1 </format>
+        <args>
+            <arg expression="get-property('incomingPayload')" ></arg>
+        </args>
+    </payloadFactory>
+
+    <log level="full">
+        
+    </log>
+</sequence>

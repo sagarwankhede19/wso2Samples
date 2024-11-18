@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api xmlns="http://ws.apache.org/ns/synapse" name="FormDataToJsonAPI" context="/urlencoded">
+    <resource methods="POST" uri-template="/transform">
+        <inSequence>
+            <!-- Set the message type to application/x-www-form-urlencoded to handle form data -->
+            <property name="messageType" value="application/x-www-form-urlencoded" scope="axis2" />
+
+            <!-- Extract form data payload from the body -->
+            <enrich>
+                <source type="body" />
+                <target type="property" property="formPayload" />
+            </enrich>
+
+            <!-- Convert URL-encoded form data to JSON using JS -->
+            <script language="js">
+            <![CDATA[
+                var DocumentBuilderFactory = Packages.javax.xml.parsers.DocumentBuilderFactory;
+                var ByteArrayInputStream = Packages.java.io.ByteArrayInputStream;
+                var String = Packages.java.lang.String;
+
+                var jsonObj = {};
+                var payload = mc.getProperty('formPayload').toString().trim();
+                if (payload.startsWith('[') && payload.endsWith(']')) {
+                    payload = payload.substring(1, payload.length - 1);
+                }
+
+                try {
+                    var factory = DocumentBuilderFactory.newInstance();
+                    var builder = factory.newDocumentBuilder();
+                    var inputStream = new ByteArrayInputStream(new String(payload).getBytes("UTF-8"));
+                    var xmlDoc = builder.parse(inputStream);
+
+                    var elements = xmlDoc.getDocumentElement().getChildNodes();
+                    for (var i = 0; i < elements.getLength(); i++) {
+                        var node = elements.item(i);
+                        if (node.getNodeType() === Packages.org.w3c.dom.Node.ELEMENT_NODE) {
+                            var key = node.getNodeName();
+                            var value = node.getTextContent();
+                            jsonObj[key] = value;
+                        }
+                    }
+
+                    // Set JSON payload
+                    mc.setPayloadJSON(JSON.stringify(jsonObj));
+                    // Also set the JSON as a property for easy access
+                    mc.setProperty('jsonPayload', JSON.stringify(jsonObj));
+
+                } catch (e) {
+                    mc.setPayloadJSON('{"error":"Error processing XML payload"}');
+                    mc.setProperty('jsonPayload', '{"error":"Error processing XML payload"}');
+                }
+            ]]>
+            </script>
+
+            <log level="full">
+                <property name="Transformed Payload" expression="get-property('jsonPayload')" />
+                <property name="Name----" expression="json-eval(get-property('jsonPayload').name)" />
+                <property name="email----" expression="json-eval(get-property('jsonPayload').email)" />
+                <property name="message----"
+                    expression="json-eval(get-property('jsonPayload').message)" />
+            </log>
+            <property name="messageBody" expression="get-property('jsonPayload')" scope="default" />
+            <property name="messageType" value="application/json" scope="axis2" />
+            <log level="full">
+                <property name="messageBody Payload" expression="get-property('messageBody')" />
+                <property name="Name----" expression="json-eval($.name)" />
+                <property name="email----" expression="json-eval($.email)" />
+                <property name="message----" expression="json-eval($.message)" />
+            </log>
+
+            <respond />
+        </inSequence>
+        <outSequence>
+            <send />
+        </outSequence>
+        <faultSequence>
+            <log level="full">
+                <property name="Error" value="Error occurred in processing form data" />
+            </log>
+            <send />
+        </faultSequence>
+    </resource>
+</api>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/samplehello" name="SampleHello" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="GET" uri-template="/hi">
+        <inSequence>
+            <!-- Step 1: Read XML from the file system -->
+            <file.read configKey="sampleConn">
+                <encoding>UTF-8</encoding>
+                <enableStreaming>false</enableStreaming>
+                <enableLock>false</enableLock>
+                <maxRetries>0</maxRetries>
+                <retryDelay>0</retryDelay>
+                <includeResultTo>FileContentProperty</includeResultTo>
+                <readMode>Complete File</readMode>
+                <path>C:/MyFolder/WSO2/MyProjects/sampleFiles</path>
+            </file.read>
+
+            <!-- Log the content of the file read into the property -->
+            <log level="full">
+                <property name="FileContent" expression="get-property('FileContentProperty')" />
+            </log>
+
+            <!-- Step 2: Set the payload to the XML content from the file -->
+            <property name="MessageType" value="application/xml" scope="axis2"/>
+            <enrich>
+                <source property="FileContentProperty" xpath="." />
+                <target type="body"/>
+            </enrich>
+
+            <!-- Step 3: Convert XML to JSON -->
+            <property name="messageType" value="application/json" scope="axis2"/>
+            <payloadFactory media-type="json">
+                <format>$1</format>
+                <args>
+                    <arg evaluator="xml" expression="get-property('FileContentProperty')" />
+                </args>
+            </payloadFactory>
+
+            <!-- Log the JSON-converted content -->
+            <log level="full">
+                <property name="ConvertedContent" expression="get-property('MessageBody')" />
+            </log>
+
+            <!-- Step 4: Send JSON response -->
+            <respond />
+        </inSequence>
+    </resource>
+</api>

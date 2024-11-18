@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api xmlns="http://ws.apache.org/ns/synapse" name="FormDataToJsonAPI" context="/urlencoded">
+    <resource methods="POST" uri-template="/transform">
+        <inSequence>
+            <!-- Set the message type to text/plain to handle form-urlencoded data -->
+            <property name="messageType" value="application/x-www-form-urlencoded" scope="axis2" />
+
+            <!-- Use the enrich mediator to extract form data from the body -->
+            <enrich>
+                <source type="body"/>
+                <target type="property" property="formPayload"/>
+            </enrich>
+
+            <!-- Use the Script Mediator to parse URL-encoded form data into JSON format -->
+            <script language="js"><![CDATA[
+                // Retrieve form payload as a string
+                var payload = mc.getProperty('formPayload').toString();
+
+                // Initialize an empty JSON object
+                var jsonObj = {};
+
+                // Split the form data string into individual key-value pairs
+                var pairs = payload.split('&');
+
+                // Iterate through each key-value pair
+                pairs.forEach(function(pair) {
+                    var keyValue = pair.split('=');
+                    var key = decodeURIComponent(keyValue[0]);
+                    var value = decodeURIComponent(keyValue[1] || ''); // Handle cases where value might be missing
+                    jsonObj[key] = value;
+                });
+
+                // Set the JSON object as the new payload
+                mc.setPayloadJSON(JSON.stringify(jsonObj));
+            ]]></script>
+
+            <!-- Log transformed JSON payload for debugging -->
+            <log level="full">
+                <property name="Transformed Payload" expression="json-eval($.)"/>
+            </log>
+
+            <respond />
+        </inSequence>
+        <outSequence>
+            <send/>
+        </outSequence>
+        <faultSequence>
+            <log level="full">
+                <property name="Error" value="Error occurred in processing form data"/>
+            </log>
+            <send/>
+        </faultSequence>
+    </resource>
+</api>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/formData" name="FormDataAPI" xmlns="http://ws.apache.org/ns/synapse" version="1.0.0" version-type="context">
+    <resource methods="POST" uri-template="/submit">
+        <inSequence>
+            <!-- Initial log to check incoming request -->
+            <log level="full">
+                <property name="Step" value="Incoming Request"/>
+            </log>
+
+            <!-- Extract individual form fields from the SOAP XML body -->
+            <property name="name" expression="//*[local-name()='name']/text()" scope="default"/>
+            <log level="full">
+                <property name="Step" value="Extracted Name"/>
+                <property name="Name" expression="get-property('name')"/>
+            </log>
+
+            <property name="email" expression="//*[local-name()='email']/text()" scope="default"/>
+            <log level="full">
+                <property name="Step" value="Extracted Email"/>
+                <property name="Email" expression="get-property('email')"/>
+            </log>
+
+            <property name="message" expression="//*[local-name()='message']/text()" scope="default"/>
+            <log level="full">
+                <property name="Step" value="Extracted Message"/>
+                <property name="Message" expression="get-property('message')"/>
+            </log>
+
+            <!-- Convert extracted form fields to JSON format -->
+            <payloadFactory media-type="json">
+                <format>
+                    {
+                        "name": "$1",
+                        "email": "$2",
+                        "message": "$3"
+                    }
+                </format>
+                <args>
+                    <arg expression="get-property('name')"/>
+                    <arg expression="get-property('email')"/>
+                    <arg expression="get-property('message')"/>
+                </args>
+            </payloadFactory>
+            <log level="full">
+                <property name="Step" value="After Payload Factory"/>
+                <property name="Payload" expression="json-eval($.name)"/>
+            </log>
+
+            <!-- Set the response content type as JSON -->
+            <property name="messageType" scope="axis2" type="STRING" value="application/json"/>
+            <log level="full">
+                <property name="Step" value="Response Content Type Set"/>
+                <property name="MessageType" expression="get-property('messageType')"/>
+            </log>
+
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence>
+            <log level="full">
+                <property name="Step" value="Fault Sequence Triggered"/>
+            </log>
+            <property name="HTTP_STATUS" value="500" scope="axis2"/>
+            <respond/>
+        </faultSequence>
+    </resource>
+</api>

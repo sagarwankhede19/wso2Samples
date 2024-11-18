@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/send" name="send" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="POST" uri-template="/">
+        <inSequence>
+            <log level="full">
+                <property name="Step" value="Incoming Request" />
+            </log>
+
+            <enrich>
+                <source type="body" />
+                <target type="property" property="requestPayload" />
+            </enrich>
+
+            <property name="auth_scheme" expression="$ctx:requestPayload/auth_scheme"
+                scope="default" />
+            <property name="format" expression="$ctx:requestPayload/format" scope="default" />
+            <property name="isTemplate" expression="$ctx:requestPayload/isTemplate" scope="default" />
+            <property name="method" expression="$ctx:requestPayload/method" scope="default" />
+            <property name="msg" expression="$ctx:requestPayload/msg" scope="default" />
+            <property name="msg_type" expression="$ctx:requestPayload/msg_type" scope="default" />
+            <property name="password" expression="$ctx:requestPayload/password" scope="default" />
+            <property name="send_to" expression="$ctx:requestPayload/send_to" scope="default" />
+            <property name="userid" expression="$ctx:requestPayload/userid" scope="default" />
+            <property name="v" expression="$ctx:requestPayload/v" scope="default" />
+            <property name="msg_id" expression="$ctx:requestPayload/msg_id" scope="default" />
+            <property name="check_duplicate_post_in_duration"
+                expression="$ctx:requestPayload/check_duplicate_post_in_duration" scope="default" />
+            <property name="check_duplicate_post"
+                expression="$ctx:requestPayload/check_duplicate_post" scope="default" />
+            <property name="extra" expression="$ctx:requestPayload/extra" scope="default" />
+            <property name="linkTrackingEnabled" expression="$ctx:requestPayload/linkTrakingEnabled"
+                scope="default" />
+            <property name="isHSM" expression="$ctx:requestPayload/isHSM" scope="default" />
+
+            <log level="full">
+                <property name="Step" value="Extracted Parameters" />
+                <property name="AuthScheme" expression="get-property('auth_scheme')" />
+                <property name="Format" expression="get-property('format')" />
+                <property name="Method" expression="get-property('method')" />
+                <property name="extra" expression="get-property('extra')" />
+            </log>
+
+            <payloadFactory media-type="json" template-type="default">
+                <format> {
+                            "messages": [
+                                {
+                                    "from": "$1",
+                                    "to": "$2",
+                                    "messageId": "$3",
+                                    "content": {
+                                        "templateName": "$4",
+                                        "templateData": {
+                                            "body": {
+                                                "placeholders": [
+                                                    "$5"
+                                                ]
+                                            }
+                                        },
+                                        "language": "$6"
+                                    },
+                                    "callbackData": "Callback data",
+                                    "notifyUrl": "http://localhost:8290/send/callback-api",
+                                    "urlOptions": {
+                                        "shortenUrl": true,
+                                        "trackClicks": true,
+                                        "trackingUrl": "https://example.com/click-report",
+                                        "removeProtocol": true, 
+                                        "customDomain": "example.com"
+                                    }
+                                }
+                            ]
+                        }
+                </format>
+                <args>
+                    <arg literal="true" value="447860099299" />
+                    <arg expression="get-property('send_to')" />
+                    <arg expression="get-property('correlation_id')" />
+                    <arg literal="true" value="test_whatsapp_template_en" />
+                    <arg literal="true" value="Sagar" />
+                    <arg literal="true" value="en" />
+                </args>
+            </payloadFactory>
+
+             <log level="full">
+                <property name="Step" value="After Payload Factory----------1" />
+                <property name="auth_scheme" expression="json-eval($.auth_scheme)" />
+            </log>
+            <header name="Authorization" scope="transport" value="App 2ab08bbc77994a426fb220a54266ee82-8d1ac4ec-0779-4ff2-82ad-04a03bb61353" />
+
+            <call>
+                <endpoint key="whatsapp-endpoint" />
+            </call>
+
+            <log level="full">
+                <property name="Step" value="After Payload Factory" />
+                <property name="auth_scheme" expression="json-eval($.auth_scheme)" />
+            </log>
+
+            <property name="messageType" scope="axis2" type="STRING" value="application/json" />
+
+            <respond />
+        </inSequence>
+
+        <outSequence />
+
+        <faultSequence>
+            <log level="full">
+                <property name="Step" value="Fault Sequence Triggered" />
+            </log>
+            <property name="HTTP_STATUS" value="500" scope="axis2" />
+            <respond />
+        </faultSequence>
+    </resource>
+    <resource methods="POST" uri-template="/callback-api">
+        <inSequence>
+            <log category="INFO" level="full">
+                <property name="first log---------------" value="sample" />
+            </log>
+            <call>
+                <endpoint key="calllbackEndPoint" />
+            </call>
+        </inSequence>
+        <faultSequence>
+        </faultSequence>
+    </resource></api>

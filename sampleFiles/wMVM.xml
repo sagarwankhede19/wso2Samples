@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<IDataXMLCoder version="1.0">
+  <record javaclass="com.wm.util.Values">
+    <record name="InsertSupplierInfoRequest_v1" javaclass="com.wm.data.ISMemDataImpl">
+      <record name="SupplierHeaderDetails" javaclass="com.wm.data.ISMemDataImpl">
+        <value name="VENDOR_NAME">RTE Ping</value>
+        <value name="VENDOR_TYPE_LOOKUP_CODE">x</value>
+        <value name="SOURCE_SYS">JDE</value>
+        <value name="SIM_SUPPIER_NUM">205637</value>
+        <value name="CREATION_DATE">2024-10-23 12:39:37.488</value>
+        <value name="LAST_UPDATE_DATE">2024-10-23 12:39:37.488</value>
+      </record>
+      <record name="SupplierSiteDetails" javaclass="com.wm.data.ISMemDataImpl">
+        <value name="SIM_SUPPLIER_NUM">205637</value>
+        <value name="SIM_SUP_SITE_ID">Amw123</value>
+        <value name="ADDRESS_LINE1">kl my</value>
+        <value name="ADDRESS_LINE2">amwy my kl</value>
+        <value name="ADDRESS_LINE3">my123456</value>
+        <value name="CITY">kl</value>
+        <value name="ZIP">amw123434</value>
+        <value name="OPERATING_UNIT_NAME">80404</value>
+        <value name="CREATION_DATE">2024-10-23 12:39:37.489</value>
+        <value name="LAST_UPDATE_DATE">2024-10-23 12:39:37.489</value>
+        <value name="STATE">my</value>
+      </record>
+      <record name="SupplierContactDetails" javaclass="com.wm.data.ISMemDataImpl">
+        <value name="VENDOR_NAME">RTE Ping</value>
+        <value name="OPERATING_UNIT_NAME">80404</value>
+        <value name="CREATION_DATE">2024-10-23 12:39:37.490</value>
+        <value name="LAST_UPDATE_DATE">2024-10-23 12:39:37.490</value>
+        <value name="ISUP_USER_NAME">RTE Ping</value>
+      </record>
+      <record name="SupplierBankDetails" javaclass="com.wm.data.ISMemDataImpl">
+        <value name="VENDOR_NAME">RTE Ping</value>
+        <value name="CREATION_DATE">2024-10-23 12:39:37.491</value>
+        <value name="LAST_UPDATE_DATE">2024-10-23 12:39:37.491</value>
+        <value name="OPERATING_UNIT_NAME">80404</value>
+      </record>
+    </record>
+    <record name="ABGCDM.AddressBook.CDM:AddressBookCDM" javaclass="com.wm.data.ISMemDataImpl">
+      <record name="Control" javaclass="com.wm.data.ISMemDataImpl">
+        <record name="General" javaclass="com.wm.data.ISMemDataImpl">
+          <value name="CanonicalVersion">1</value>
+          <value name="FromApplication">JDE</value>
+          <value name="CurrentDate">09/18/2024</value>
+          <value name="CurrentTime">02:47:29</value>
+          <value name="CreateXrefCanonical">false</value>
+          <value name="PublishResponse">0</value>
+        </record>
+      </record>
+      <record name="Data" javaclass="com.wm.data.ISMemDataImpl">
+        <value name="ActionType">2</value>
+        <value name="Entity">205637</value>
+        <value name="EntityType">x</value>
+        <value name="Name">RTE Ping</value>
+        <value name="BusinessUnit">80404</value>
+        <value name="ClientID">Amw123</value>
+        <record name="Address" javaclass="com.wm.data.ISMemDataImpl">
+          <value name="MailingName">RTE Ping</value>
+          <value name="AddressLine1">kl my</value>
+          <value name="AddressLine2">amwy my kl</value>
+          <value name="AddressLine3">my123456</value>
+          <value name="City">kl</value>
+          <value name="State">my</value>
+          <value name="ZipPostalCode">amw123434</value>
+        </record>
+      </record>
+    </record>
+  </record>
+</IDataXMLCoder>

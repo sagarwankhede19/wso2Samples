@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api xmlns="http://ws.apache.org/ns/synapse" name="FormDataToJsonAPI" context="/urlencoded">
+    <resource methods="POST" uri-template="/transform">
+        <inSequence>
+            <!-- Set the message type to application/x-www-form-urlencoded to handle form data -->
+            <property name="messageType" value="application/x-www-form-urlencoded" scope="axis2" />
+
+            <!-- Extract form data payload from the body -->
+            <enrich>
+                <source type="body"/>
+                <target type="property" property="formPayload"/>
+            </enrich>
+
+            <!-- Convert URL-encoded form data to JSON using Groovy -->
+            <script language="js">
+                <![CDATA[
+                    // Import necessary Java classes for XML parsing
+                    var DocumentBuilderFactory = Packages.javax.xml.parsers.DocumentBuilderFactory;
+                    var ByteArrayInputStream = Packages.java.io.ByteArrayInputStream;
+                    var String = Packages.java.lang.String;
+
+                    var jsonObj = {};
+                    
+                    // Get the form payload and convert it to a string, removing any surrounding brackets
+                    var payload = mc.getProperty('formPayload').toString().trim();
+
+                    if (payload.startsWith('[') && payload.endsWith(']')) {
+                        payload = payload.substring(1, payload.length - 1);
+                    }
+                    
+                    try {
+                        // Parse the XML using Java's DocumentBuilderFactory
+                        var factory = DocumentBuilderFactory.newInstance();
+                        var builder = factory.newDocumentBuilder();
+                        var inputStream = new ByteArrayInputStream(new String(payload).getBytes("UTF-8"));
+                        var xmlDoc = builder.parse(inputStream);
+                        
+                        // Get the root element and iterate over its child nodes
+                        var elements = xmlDoc.getDocumentElement().getChildNodes();
+
+                        for (var i = 0; i < elements.getLength(); i++) {
+                            var node = elements.item(i);
+                            if (node.getNodeType() === Packages.org.w3c.dom.Node.ELEMENT_NODE) {
+                                var key = node.getNodeName();
+                                var value = node.getTextContent();
+                                jsonObj[key] = value;
+                            }
+                        }
+                        
+                        // Set the JSON payload
+                        mc.setPayloadJSON(JSON.stringify(jsonObj));
+                    } catch (e) {
+                        // Handle parsing errors
+                        mc.setPayloadJSON('{"error":"Error processing XML payload"}');
+                    }
+                ]]>
+            </script>
+
+            <!-- Log transformed JSON payload for debugging -->
+            <log level="full">
+                <property name="Transformed Payload" expression="get-property('JSON_PAYLOAD')"/>
+            </log>
+
+            <respond />
+        </inSequence>
+        <outSequence>
+            <send/>
+        </outSequence>
+        <faultSequence>
+            <log level="full">
+                <property name="Error" value="Error occurred in processing form data"/>
+            </log>
+            <send/>
+        </faultSequence>
+    </resource>
+</api>

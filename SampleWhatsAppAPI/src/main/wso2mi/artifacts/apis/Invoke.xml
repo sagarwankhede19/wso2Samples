@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/invoke" name="Invoke" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="GET" uri-template="/">
+        <inSequence>
+            <!-- Set Authorization Header -->
+            <header name="Authorization" scope="transport"
+                value="App 2ab08bbc77994a426fb220a54266ee82-8d1ac4ec-0779-4ff2-82ad-04a03bb61353" />
+            
+            <!-- Payload Factory to create JSON request payload -->
+            <payloadFactory media-type="json" template-type="default">
+                <format>
+                    { "messages": [ { "from": "447860099299", "to": "918806078945", "messageId":
+                    "91eae76c-2e4b-40aa-9a54-420ecf8ebdf9", "content": { "templateName":
+                    "test_whatsapp_template_en", "templateData": { "body": { "placeholders": [
+                    "Sagar" ] } }, "language": "en" } } ] } </format>
+                <args />
+            </payloadFactory>
+            <call>
+                <endpoint key="template" />
+            </call>
+            <respond />
+        </inSequence>
+        <faultSequence/>
+    </resource>
+</api>

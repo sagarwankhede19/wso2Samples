@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/send-config" name="Send" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="GET" uri-template="/">
+        <inSequence>
+            <property name="auth_token" expression="get-property('system', 'auth_token')"
+                scope="default" />
+            <log level="full">
+                <property name="AuthTokenValue-------" expression="get-property('auth_token')" />
+            </log>
+            <property name="apiUrl"
+                expression="get-property('carbon.context:/custom_configuration/auth_token')"
+                scope="default" />
+            <log level="custom">
+                <property name="API URL-----------" expression="get-property('apiUrl')" />
+            </log>
+            <property name="Authorization" scope="default" type="STRING"
+                expression="get-property('auth_token')" />
+            <header name="Authorization" scope="transport"
+                expression="get-property('auth_token')" />
+            <!-- <header name="Authorization" scope="transport"
+                value="App 2ab08bbc77994a426fb220a54266ee82-8d1ac4ec-0779-4ff2-82ad-04a03bb61353" /> -->
+            <log category="INFO" level="full" />
+            <payloadFactory media-type="json" template-type="default">
+                <format>{ "messages": [ { "from": "447860099299", "to": "918806078945", "messageId":
+                    "91eae76c-2e4b-40aa-9a54-420ecf8ebdf9", "content": { "templateName":
+                    "test_whatsapp_template_en", "templateData": { "body": { "placeholders": [
+                    "Sagar" ] } }, "language": "en" } } ] }</format>
+                <args>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint key="InfobipAPI" />
+            </call>
+            <respond />
+        </inSequence>
+        <faultSequence>
+        </faultSequence>
+    </resource>
+</api>

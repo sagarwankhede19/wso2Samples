@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/urlencoded" name="UrlAPI" xmlns="http://ws.apache.org/ns/synapse" version-type="context">
+    <resource methods="POST">
+        <inSequence>
+            <log level="full">
+                <property name="Step" value="Incoming Request"/>
+            </log>
+
+            <enrich>
+                <source type="body"/>
+                <target type="property" property="requestPayload"/>
+            </enrich>
+
+            <property name="name" expression="$ctx:requestPayload/name" scope="default"/>
+            <property name="email" expression="$ctx:requestPayload/email" scope="default"/>
+            <property name="message" expression="$ctx:requestPayload/message" scope="default"/>
+
+            <log level="full">
+                <property name="Step" value="Extracted Parameters"/>
+                <property name="Name" expression="get-property('name')"/>
+                <property name="Email" expression="get-property('email')"/>
+                <property name="Message" expression="get-property('message')"/>
+            </log>
+
+            <payloadFactory media-type="json">
+                <format>
+                    {
+                        "name": "$1",
+                        "email": "$2",
+                        "message": "$3"
+                    }
+                </format>
+                <args>
+                    <arg expression="get-property('name')"/>
+                    <arg expression="get-property('email')"/>
+                    <arg expression="get-property('message')"/>
+                </args>
+            </payloadFactory>
+
+            <log level="full">
+                <property name="Step" value="After Payload Factory"/>
+                <property name="Payload" expression="json-eval($.name)"/>
+            </log>
+
+            <property name="messageType" scope="axis2" type="STRING" value="application/json"/>
+            <respond/>
+        </inSequence>
+        
+        <outSequence/>
+        
+        <faultSequence>
+            <log level="full">
+                <property name="Step" value="Fault Sequence Triggered"/>
+            </log>
+            <property name="HTTP_STATUS" value="500" scope="axis2"/>
+            <respond/>
+        </faultSequence>
+    </resource>
+</api>

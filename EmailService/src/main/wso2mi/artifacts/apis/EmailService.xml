@@ -1,0 +1,34 @@
+<api context="/email" name="EmailService" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="POST" uri-template="/send">
+        <inSequence>
+            <property name="from" expression="json-eval($.from)" scope="default" type="STRING"/>
+            <property name="to" expression="json-eval($.to)" scope="default" type="STRING"/>
+            <property name="subject" expression="json-eval($.subject)" scope="default" type="STRING"/>
+            <property name="content" expression="json-eval($.content)" scope="default" type="STRING"/>
+            <property name="contentType" expression="json-eval($.contentType)" scope="default" type="STRING"/>
+            <!-- Example attachment handling, replace this with specific file handling logic -->
+            <property name="attachment1" expression="json-eval($.attachments[0].fileName)" scope="default" type="STRING"/>
+            <property name="attachmentContentType1" expression="json-eval($.attachments[0].contentType)" scope="default" type="STRING"/>
+            
+            <email.send configKey="smtpsconnection">
+                <from>{get-property('from')}</from>
+                <to>{get-property('to')}</to>
+                <subject>{get-property('subject')}</subject>
+                <content>{get-property('content')}</content>
+                <contentType>{get-property('contentType')}</contentType>
+                <attachment>
+                    <fileName>{get-property('attachment1')}</fileName>
+                    <contentType>{get-property('attachmentContentType1')}</contentType>
+                </attachment>
+            </email.send>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence>
+            <log level="custom">
+                <property expression="get-property('ERROR_CODE')" name="ERROR CODE"/>
+                <property expression="get-property('ERROR_MESSAGE')" name="ERROR MESSAGE"/>
+            </log>
+        </faultSequence>
+    </resource>
+</api>
