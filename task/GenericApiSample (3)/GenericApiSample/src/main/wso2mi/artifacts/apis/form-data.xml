@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/form-data" name="form-data" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="POST" uri-template="/">
+        <inSequence>
+            <log level="full">
+                <property name="INFO" value="Starting phone number processing..." />
+            </log>
+            <enrich>
+                <source type="body" />
+                <target type="property" property="requestPayload" />
+            </enrich>
+            <property name="send_to" expression="$ctx:requestPayload/send_to" scope="default" />
+            <property name="templateName" expression="$ctx:requestPayload/templateName"
+                scope="default" />
+            <property name="from" expression="$ctx:requestPayload/from" scope="default" />
+            <property name="placeholdersData" expression="//xformValues/placeholders"
+                scope="default" />
+
+            <log level="custom">
+                <property name="Extracted placeholdersData"
+                    expression="get-property('placeholdersData')" />
+                <property name="Extracted keyyyy--------" expression="get-property('keyyyy')" />
+                <property name="Extracted requestPayload"
+                    expression="get-property('requestPayload')" />
+            </log>
+
+            <switch source="get-property('templateName')">
+                <case regex="draft_psa">
+                    <log level="custom">
+                        <property name="inside case draft_psa--------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_draft_psa" />
+                </case>
+                <case regex="psa_1">
+                    <log level="custom">
+                        <property name="inside case --------------psa_1" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_psa_1" />
+                </case>
+                <case regex="psa_6">
+                    <log level="custom">
+                        <property name="inside case --------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_psa_6" />
+                </case>
+                <case regex="psa_7_1">
+                    <log level="custom">
+                        <property name="inside case --------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_psa_7_1" />
+                </case>
+                <case regex="psa_7_2">
+                    <log level="custom">
+                        <property name="inside case --------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_psa_7_2" />
+                </case>
+                <case regex="psa_7b">
+                    <log level="custom">
+                        <property name="inside case --------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_psa_7b" />
+                </case>
+
+                <!-- PM Cases -->
+                <case regex="pm_1_1parameter">
+                    <log level="custom">
+                        <property name="inside case --------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_pm_1_1parameter" />
+                </case>
+                <case regex="pm_1_2parameter">
+                    <log level="custom">
+                        <property name="inside case --------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_pm_1_2parameter" />
+                </case>
+                <case regex="pm_2_1parameter">
+                    <log level="custom">
+                        <property name="inside case --------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_pm_2_1parameter" />
+                </case>
+                <case regex="pm_2_2parameter">
+                    <log level="custom">
+                        <property name="inside case --------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_pm_2_2parameter" />
+                </case>
+                <case regex="pm_3_1parameter">
+                    <log level="custom">
+                        <property name="inside case --------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_pm_3_1parameter" />
+                </case>
+                <case regex="pm_3_2parameter">
+                    <log level="custom">
+                        <property name="inside case --------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_pm_3_2parameter" />
+                </case>
+                <!-- CPE Replacement Survey -->
+                <case regex="cpe_replacement_survey_17b">
+                    <log level="custom">
+                        <property name="inside case --------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_cpe_replacement_survey_17b" />
+                </case>
+                <case regex="cpe_replacement_survey_17a">
+                    <log level="custom">
+                        <property name="inside case --------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_cpe_replacement_survey_17a" />
+                </case>
+
+                <!-- CPE Replacement Delay -->
+                <case regex="cpe_replacement_delay_25a">
+                    <log level="custom">
+                        <property name="inside case --------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_cpe_replacement_delay_25a" />
+                </case>
+                <case regex="cpe_replacement_delay_25b">
+                    <log level="custom">
+                        <property name="inside case --------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_cpe_replacement_delay_25b" />
+                </case>
+                <!-- CPE Replacement Delivery -->
+                <case regex="cpe_replacement_delivery_30a">
+                    <log level="custom">
+                        <property name="inside case --------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_cpe_replacement_delivery_30a" />
+                </case>
+                <case regex="cpe_replacement_delivery_30b">
+                    <log level="custom">
+                        <property name="inside case --------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_cpe_replacement_delivery_30b" />
+                </case>
+                <case regex="cpe_replacement_delivery_16">
+                    <log level="custom">
+                        <property name="inside case --------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_cpe_replacement_delivery_16" />
+                </case>
+                <case regex="cpe_replacement_delivery_16b">
+                    <log level="custom">
+                        <property name="inside case cpe_replacement_delivery_16b--------------" expression="get-property('templateName')"/>
+                    </log>
+                    <sequence key="template_cpe_replacement_delivery_16b" />
+                </case>
+                <default></default>
+            </switch>
+
+
+            <property name="auth_token"
+                value="App 9e8f28c4291996895cb5be1472866353-0e8a9ee2-aac4-43a4-bad0-6e1b0b7bc9cc"
+                scope="default" />
+
+            <header name="Authorization" action="set" scope="transport"
+                expression="get-property('auth_token')" />
+
+            <log level="full">
+                <property name="before" value="before endpoint----------------"></property>
+            </log> 
+            <call>
+                <endpoint key="whatsappEndpoint" />
+            </call>
+            <log level="full">
+                <property name="enddd" value="after endpoint----------------"></property>
+            </log>
+            <respond />
+        </inSequence>
+
+        <faultSequence>
+            <log level="full">
+                <property name="ERROR" value="An error occurred during phone number processing." />
+            </log>
+        </faultSequence>
+    </resource>
+</api>

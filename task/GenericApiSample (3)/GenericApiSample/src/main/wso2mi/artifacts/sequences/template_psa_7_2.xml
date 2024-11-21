@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="template_psa_7_2" xmlns="http://ws.apache.org/ns/synapse">
+    <log level="full">
+        <property name="from---------" expression="get-property('from')" />
+        <property name="templateName---------" expression="get-property('templateName')" />
+        <property name="send_to-------" expression="get-property('send_to')" />
+        <property name="placeholdersData-------" expression="get-property('placeholdersData')" />
+    </log>
+    <payloadFactory media-type="json" template-type="default">
+        <format> {
+                    "messages": [
+                        {
+                            "from": "$1",
+                            "to": "$2",
+                            "content": {
+                                "templateName": "$3",
+                                "templateData": {
+                                    "body": {
+                                        "placeholders": [
+                                            "$4"
+                                        ]
+                                    }
+                                },
+                                "language": "en"
+                            }
+                        }
+                    ]
+                }
+        </format>
+        <args>
+            <arg expression="get-property('from')" />
+            <arg expression="get-property('send_to')" />
+            <arg expression="get-property('templateName')" />
+            <arg expression="get-property('placeholdersData')" />
+        </args>
+    </payloadFactory>
+</sequence>

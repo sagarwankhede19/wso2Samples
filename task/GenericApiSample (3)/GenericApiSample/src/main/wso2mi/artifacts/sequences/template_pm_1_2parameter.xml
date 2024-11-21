@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="template_pm_1_2parameter" xmlns="http://ws.apache.org/ns/synapse">
+    <property name="placeholder1"
+            expression="substring-before(get-property('placeholdersData'), ',')" 
+            scope="default" />
+    <property name="placeholder2"
+            expression="substring-before(substring-after(get-property('placeholdersData'), ','), ',')" 
+            scope="default" />
+    <property name="placeholder3"
+            expression="substring-after(substring-after(get-property('placeholdersData'), ','), ',')" 
+            scope="default" />
+
+    <log level="full">
+        <property name="from---------" expression="get-property('from')" />
+        <property name="templateName---------" expression="get-property('templateName')" />
+        <property name="send_to-------" expression="get-property('send_to')" />
+        <property name="placeholder1-------" expression="get-property('placeholder1')" />
+        <property name="placeholder2-------" expression="get-property('placeholder2')" />
+        <property name="placeholder3-------" expression="get-property('placeholder3')" />
+    </log>
+    <payloadFactory media-type="json" template-type="default">
+        <format> {
+                    "messages": [
+                        {
+                            "from": "$1",
+                            "to": "$2",
+                            "content": {
+                                "templateName": "$3",
+                                "templateData": {
+                                    "body": {
+                                        "placeholders": [
+                                            "$4",
+                                            "$5",
+                                            "$6"
+                                        ]
+                                    }
+                                },
+                                "language": "en"
+                            }
+                        }
+                    ]
+                }
+        </format>
+        <args>
+            <arg expression="get-property('from')" />
+            <arg expression="get-property('send_to')" />
+            <arg expression="get-property('templateName')" />
+            <arg expression="get-property('placeholder1')" />
+            <arg expression="get-property('placeholder2')" />
+            <arg expression="get-property('placeholder3')" />
+        </args>
+    </payloadFactory>
+</sequence>

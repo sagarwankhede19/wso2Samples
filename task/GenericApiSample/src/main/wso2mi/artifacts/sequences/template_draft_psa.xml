@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="template_draft_psa" xmlns="http://ws.apache.org/ns/synapse">
+    <log level="full">
+        <property name="Process" value="Processing  template_draft_psa----------" />
+    </log>
+    <!-- <respond /> -->
+</sequence>

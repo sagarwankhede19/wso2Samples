@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="template_psa_7b" xmlns="http://ws.apache.org/ns/synapse">
+    <log level="full">
+        <property name="Action" value="Processing PSA 7b------------"/>
+    </log>
+</sequence>

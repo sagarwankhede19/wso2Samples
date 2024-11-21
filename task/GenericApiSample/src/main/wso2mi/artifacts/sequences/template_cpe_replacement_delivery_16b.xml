@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="template_cpe_replacement_delivery_16b" xmlns="http://ws.apache.org/ns/synapse">
+    <log level="full">
+        <property name="Action" value="Processing CPE Replacement Delivery 16b------------"/>
+    </log>
+</sequence>

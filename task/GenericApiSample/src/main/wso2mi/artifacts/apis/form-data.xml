@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/form-data" name="form-data" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="POST" uri-template="/">
+        <inSequence>
+            <log level="full">
+                <property name="INFO" value="Starting phone number processing..." />
+            </log>
+            <enrich>
+                <source type="body" />
+                <target type="property" property="requestPayload" />
+            </enrich>
+            <property name="placeholdersData" expression="//xformValues/placeholders"
+                scope="default" />
+            <property name="keyyyy" expression="//xformValues/key" scope="default" />
+
+            <log level="custom">
+                <property name="Extracted placeholdersData"
+                    expression="get-property('placeholdersData')" />
+                <property name="Extracted keyyyy--------" expression="get-property('keyyyy')" />
+                <property name="Extracted requestPayload"
+                    expression="get-property('requestPayload')" />
+            </log>
+
+            <property name="placeholder1"
+                expression="substring-before(get-property('placeholdersData'), ',')" scope="default" />
+            <property name="placeholder2"
+                expression="substring-before(substring-after(get-property('placeholdersData'), ','), ',')"
+                scope="default" />
+            <property name="placeholder3"
+                expression="substring-after(substring-after(get-property('placeholdersData'), ','), ',')"
+                scope="default" />
+
+            <log level="custom">
+                <property name="Extracted placeholder1"
+                    expression="get-property('placeholder1')" />
+                <property name="Extracted placeholder2"
+                    expression="get-property('placeholder2')" />
+                <property name="Extracted placeholder3"
+                    expression="get-property('placeholder3')" />
+            </log>
+
+
+            <switch source="get-property('placeholder1')">
+                <case regex="draft_psa">
+                    <sequence key="template_draft_psa" />
+                </case>
+                <case regex="psa_1">
+                    <log level="full">
+                        <property name="inside case psa_1---------------"
+                            expression="get-property('placeholder1')" />
+                    </log>
+                    <sequence key="template_psa_1" />
+                </case>
+                <case regex="psa_6">
+                    <sequence key="template_psa_6" />
+                </case>
+                <case regex="psa_7_1">
+                    <sequence key="template_psa_7_1" />
+                </case>
+                <case regex="psa_7_2">
+                    <sequence key="template_psa_7_2" />
+                </case>
+                <case regex="psa_7b">
+                    <sequence key="template_psa_7b" />
+                </case>
+
+                <!-- PM Cases -->
+                <case regex="pm_1_1parameter">
+                    <sequence key="template_pm_1_1parameter" />
+                </case>
+                <case regex="pm_1_2parameter">
+                    <sequence key="template_pm_1_2parameter" />
+                </case>
+                <case regex="pm_2_1parameter">
+                    <sequence key="template_pm_2_1parameter" />
+                </case>
+                <case regex="pm_2_2parameter">
+                    <sequence key="template_pm_2_2parameter" />
+                </case>
+                <case regex="pm_3_1parameter">
+                    <sequence key="template_pm_3_1parameter" />
+                </case>
+                <case regex="pm_3_2parameter">
+                    <sequence key="template_pm_3_2parameter" />
+                </case>
+                <!-- CPE Replacement Survey -->
+                <case regex="cpe_replacement_survey_17b">
+                    <sequence key="template_cpe_replacement_survey_17b" />
+                </case>
+                <case regex="cpe_replacement_survey_17a">
+                    <sequence key="template_cpe_replacement_survey_17a" />
+                </case>
+
+                <!-- CPE Replacement Delay -->
+                <case regex="cpe_replacement_delay_25a">
+                    <sequence key="template_cpe_replacement_delay_25a" />
+                </case>
+                <case regex="cpe_replacement_delay_25b">
+                    <sequence key="template_cpe_replacement_delay_25b" />
+                </case>
+                <!-- CPE Replacement Delivery -->
+                <case regex="cpe_replacement_delivery_30a">
+                    <sequence key="template_cpe_replacement_delivery_30a" />
+                </case>
+                <case regex="cpe_replacement_delivery_30b">
+                    <sequence key="template_cpe_replacement_delivery_30b" />
+                </case>
+                <case regex="cpe_replacement_delivery_16">
+                    <sequence key="template_cpe_replacement_delivery_16" />
+                </case>
+                <case regex="cpe_replacement_delivery_16b">
+                    <sequence key="template_cpe_replacement_delivery_16b" />
+                </case>
+                <default></default>
+            </switch>
+
+
+            <log level="full">
+                <property name="after switch---------------" expression="get-property('Payload')" />
+            </log>
+
+            <payloadFactory media-type="json" template-type="default">
+                <format>{
+                    "messages": [ { "from": "601112669338", "to": "918806078945", "messageId":
+                    "a28dd97c-1ffb-4fcf-99f1-0b557ed381da", "content": { "templateName":
+                    "draft_psa", "templateData": { "body": { "placeholders": [ "$body/placeholder1",
+                    "$body/placeholder2" ] }, "buttons": [ { "type": "QUICK_REPLY", "parameter":
+                    "Let's proceed" } ], "language": "en" } } } ] } </format>
+                <args>
+                    <arg evaluator="xml" expression="get-property('placeholdersData')" />
+                </args>
+            </payloadFactory>
+
+            <log level="full">
+                <property name="Generated Payload" expression="get-property('Payload')" />
+            </log>
+
+            <respond />
+        </inSequence>
+
+        <faultSequence>
+            <log level="full">
+                <property name="ERROR" value="An error occurred during phone number processing." />
+            </log>
+        </faultSequence>
+    </resource>
+</api>

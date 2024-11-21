@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="template_pm_2_1parameter" xmlns="http://ws.apache.org/ns/synapse">
+    <log level="full">
+        <property name="Action" value="Processing PM 2_1parameter------------"/>
+    </log>
+</sequence>
